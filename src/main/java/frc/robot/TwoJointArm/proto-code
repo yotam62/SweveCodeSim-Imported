@@ -1,0 +1,134 @@
+ARM SUBSYSTEM - PROTO-CODE (PLAIN TEXT VERSION)
+
+FILE LIST
+
+ArmConstants: physical constants, motor IDs, gearboxes, PID and feedforward gains.
+ArmPose: data type holding the target end effector position and a wrist angle.
+ArmState: data type holding one trajectory waypoint, meaning both joint angles and both joint velocities.
+ArmTrajectory: data type holding an ordered list of ArmState waypoints plus a method to sample a point in time.
+ArmKinematics: plain static methods converting a pose into joint angles and back again.
+ArmDynamics: plain static methods computing feedforward voltage from a given state.
+ArmIO: interface defining the hardware contract, meaning how to read sensors and how to send voltage.
+ArmIOReal: implementation of that interface using real motor controllers and encoders.
+ArmIOSim: implementation of that interface using a physics simulation instead of real hardware.
+Arm: the subsystem itself, holds an ArmIO reference, has a handful of small public methods, and a thin periodic method.
+ArmTrajectoryGenerator: interface with exactly one method, generate a trajectory from a start state and a goal state.
+LinearJointGenerator, TrapezoidalJointGenerator, and eventually an optimized generator: separate classes implementing that interface, one per complexity tier.
+FollowArmTrajectory: the one real Command in the plan.
+ArmCommands: factory methods that tie the plain-method steps together into something schedulable.
+
+ARM CONSTANTS
+
+Holds all constants for the arm, grouped by purpose.
+
+Physical properties per link: shoulder length in meters, shoulder mass in kilograms, shoulder center of mass distance in meters, used for the gravity feedforward term, and the same three values again for the elbow.
+
+Motor IDs: shoulder motor CAN ID, elbow motor CAN ID, shoulder encoder ID, elbow encoder ID.
+
+Motor model and gearing. This answers your question about simulating a Kraken X60 without hand-writing constants. WPILib's DCMotor class has a factory method, DCMotor dot getKrakenX60, that already has the correct torque constant, velocity constant, and internal resistance baked in from the real datasheet. Call withReduction on the result with your gear ratio to account for gearing. Define one DCMotor object for the shoulder gearbox and one for the elbow gearbox this way, no need to hand derive any of it.
+
+Motion constraints: maximum velocity and maximum acceleration, in radians per second and radians per second squared, for both the shoulder and the elbow. These get used by the trapezoidal trajectory generator and by soft limits.
+
+PID and feedforward gains: proportional and derivative gains for the shoulder and for the elbow, plus static friction, gravity, velocity, and acceleration feedforward terms for each. Keep all of these as plain constants for now. Only promote them to a live-tunable value later, once you are actually tuning on real or simulated hardware, not before.
+
+ARM POSE
+
+A small data type, not a Command. Holds three values, an x coordinate, a z coordinate, and a wrist angle. Deliberately not built from the standard field-position types, because those assume a point on the flat field, which is not what this is. This is a point in the arm's vertical plane, plus a wrist angle that is not part of that plane's rotation.
+
+Open question, flagged rather than assumed: everything else in this plan treats the arm as two links, shoulder and elbow. Where does the wrist actually live, is it a third joint solved together with the other two, or a separate simpler mechanism with its own trivial position command. Decide this before writing the real kinematics and dynamics math, since it changes what the trajectory waypoint type needs to hold.
+
+ARM Point Trajectory
+
+A data type representing one trajectory waypoint. Holds four values, the shoulder angle, the elbow angle, the shoulder angular velocity, and the elbow angular velocity. This same shape is used both as the goal fed into a trajectory generator and as the sample read back out of one at a given moment in time.
+
+ARM TRAJECTORY
+
+This answers the question, what type would a path be. A data type holding an ordered list of waypoints, plus a total duration in seconds. It should have a method that takes a point in time and interpolates between the two bracketing waypoints to produce the state at that instant, structurally the joint-space equivalent of WPILib's own trajectory sampling. This piece was not explicitly spelled out in the original feedback, but it follows naturally from the comparison to WPILib's trajectory class, and it is what lets the actual following command stay a simple lookup each loop instead of re-deriving interpolation logic itself.
+
+ARM KINEMATICS
+
+Plain static methods, never a Command. One method, inverse kinematics, takes an x and y position and returns a state with just the two joint angles filled in, the geometric, law of cosines style solve, the sine-based math from the mechanical advantage two link arm writeup. A second method, forward kinematics, takes the two joint angles and returns the x-y position, useful for verification, logging, and comparing actual position to commanded position. These methods get called from inside whatever needs a goal state, which is the command factory described further down, never instantiated as a Command of their own.
+
+ARM DYNAMICS
+
+Plain static methods computing feedforward voltage. One method, calculate feedforward, takes a state and returns a pair of voltages, one for the shoulder and one for the elbow. Internally it combines a gravity term from each link's mass and center of mass distance, a velocity and acceleration term from each motor's velocity and acceleration constants, and a coupling term between the two links, since moving one joint affects the torque needed at the other. That coupling term is the genuinely hard piece of math, and isolating it here means both the trajectory following command and the simulation class can call the same function instead of each re-deriving it.
+
+ARM IO, THE HARDWARE SEAM
+
+An interface, not something you instantiate directly. It defines an inner data holder with eight fields, shoulder angle in radians, shoulder velocity in radians per second, shoulder applied voltage, shoulder current in amps, and the same four fields again for the elbow. It defines two required methods, update inputs, which fills that data holder with the latest readings, and set voltage, which takes a shoulder voltage and an elbow voltage and sends them out. It also defines one optional method, set brake mode, with a default do-nothing implementation.
+
+ARM IO REAL
+
+An implementation of the interface above that wraps the actual motor controller and encoder objects. Its update inputs method reads the real hardware and writes the results into the data holder's fields. Its set voltage method writes out to the real motor controllers.
+
+ARM IO SIM
+
+An implementation of the interface above that holds simulated joint state, angle and velocity, instead of real hardware. Its set voltage method just stores the commanded voltage. Its update inputs method advances the simulation by one timestep, using the dynamics class and the motor objects from the constants file, and writes the resulting simulated state into the data holder's fields. This is where the class to deal with sim, given a voltage produce the deltas, from your original plan actually lives, and it only makes sense to build once the dynamics math is stable.
+
+ARM, THE SUBSYSTEM
+
+Extends the standard subsystem base class. Holds one field, an ArmIO reference, plus one instance of the ArmIO data holder that gets reused every loop. Its constructor takes only that ArmIO reference as a parameter, no other parameters, since physical constants live in the constants file and gains do too, tunable later but not yet.
+
+Its periodic method does exactly one thing every loop, call update inputs on the IO object. Optionally it can also log those inputs if you adopt a logging framework, but that is it, no PID and no feedforward calculation happen here.
+
+Its public methods, the way Commands actually talk to it, are set voltage, which takes a shoulder voltage and an elbow voltage and passes them straight to the IO object's set voltage method, and get measured state, which reads the current values out of the data holder and packages them into an ArmState.
+
+Change worth flagging explicitly: your original plan put running a PID loop inside periodic. The corrected design moves that into the trajectory following command's execute method instead, so periodic only ever reads hardware. That keeps the subsystem identical whether the IO object is real or simulated, and keeps all the logic about what the arm should be doing right now in one place, the command, instead of split across two files.
+
+ARM TRAJECTORY GENERATOR, THE STRATEGY PATTERN
+
+An interface with exactly one method, generate, which takes a starting state and a goal state and returns a trajectory. Each complexity tier gets its own class implementing this same interface, rather than one class with a complexity flag and a large if-else chain.
+
+The simplest implementation, a linear joint generator, interpolates each joint linearly over a fixed duration, ignoring velocity and acceleration limits entirely, a good first version to get something running.
+
+A medium complexity implementation, a trapezoidal joint generator, gives each joint a trapezoidal velocity profile that respects the maximum velocity and maximum acceleration values from the constants file.
+
+A future, higher complexity implementation would use an optimization approach, solving for a minimum time or minimum energy trajectory that respects the torque limits coming from the dynamics class. Whatever holds a reference to a generator does not need to know or care which tier it is using.
+
+FOLLOW ARM TRAJECTORY, THE ONE REAL COMMAND
+
+This is a genuine Command, the only one in the whole plan, because it runs every loop for a duration and ends on a condition. It holds a reference to the Arm subsystem, the trajectory to follow, a PID controller for the shoulder built from the shoulder gains in the constants file, a PID controller for the elbow built the same way, and a timer.
+
+Its initialize method restarts the timer.
+
+Its execute method does the following each loop: samples the trajectory at the current elapsed time to get the setpoint, reads the arm's measured state, asks the dynamics class for the feedforward voltages at that setpoint, runs each PID controller comparing measured angle to setpoint angle to get a feedback correction, and finally calls the arm's set voltage method with feedforward plus feedback added together for each joint.
+
+Its is-finished method returns true once the elapsed time passes the trajectory's total duration.
+
+Its end method sends zero voltage to both joints, though whether that is the right choice versus holding the last commanded angle is worth deciding later, depending on whether gravity would let the arm free-fall.
+
+One nuance worth noting: the PID controllers are created fresh each time this command runs, so their integral term resets between separate trajectories. That is usually the right behavior for point to point moves, so you do not carry over windup from an unrelated previous move, but it is a deliberate choice rather than an oversight, in case you would rather use persistent gains instead.
+
+ARM COMMANDS, THE GLUE
+
+Not something explicitly spelled out in the original feedback, but it follows naturally from it. The feedback establishes that inverse kinematics and trajectory generation are plain methods invoked inside whatever command needs them, but something still has to actually call them in order and produce a runnable command. This is the standard way teams handle that glue.
+
+One static method, go to pose, takes the Arm subsystem, a target pose, and a trajectory generator to use. It calls inverse kinematics on the target pose's x and y to get a goal state, reads the arm's current measured state as the starting point, calls generate on the given generator with that start and goal to produce a trajectory, and returns a new instance of the follow-trajectory command built from the arm and that trajectory.
+
+This is the one place inverse kinematics and trajectory generation actually get called, and both are still just plain method calls, run once, before the real command is even constructed.
+
+HOW A BUTTON PRESS TURNS INTO VOLTAGE
+
+First, a driver or operator triggers a binding, which calls the go-to-pose factory method with the arm, a target pose, and a chosen generator.
+
+Second, that method runs inverse kinematics once, plain math, not a command.
+
+Third, it runs the generator's generate method once, also plain math, producing a trajectory.
+
+Fourth, a new follow-trajectory command is scheduled, the only object in the whole plan with a real lifecycle.
+
+Fifth, every loop the command's execute method samples the trajectory, asks the dynamics class for feedforward, adds PD feedback, and calls the arm's set voltage method.
+
+Sixth, set voltage delegates straight to the IO object's set voltage method, real motors or simulation, the subsystem itself does not know or care which.
+
+Seventh, meanwhile the arm's periodic method is continuously calling update inputs on the IO object, so get measured state always reflects the latest reading, whether that reading came from a real encoder or a simulated one, using the exact same code path either way.
+
+OPEN QUESTIONS FOR YOU
+
+Wrist handling: third joint in the same solve, or a separate simple mechanism. This changes what the trajectory waypoint type and the dynamics class need to account for.
+
+Generator selection: should the go-to-pose factory always take the generator as a parameter, letting the caller decide complexity each time, or should there be a default generator with the option to override only for special cases.
+
+End behavior: should ending the trajectory-following command cut voltage to zero, or hold the last commanded angle. The right answer depends on whether gravity would let the arm free-fall without power.
+
+Sim internals: exactly how the simulated IO implementation integrates the two-link dynamics on each update, using the dynamics class and the motor objects from the constants file, worth sketching once the dynamics math is actually correct on paper.
