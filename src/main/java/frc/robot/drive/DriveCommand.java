@@ -16,6 +16,7 @@ import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.command2.Command;
+import org.wpilib.command2.button.CommandGamepad;
 import org.wpilib.command2.button.GamepadButton;
 
 public class DriveCommand extends Command {
@@ -23,9 +24,9 @@ public class DriveCommand extends Command {
     private DoubleSupplier ySupplier;
     private Drive swerve;
     private DoubleSupplier rotationSupplier;
-    Gamepad controller;
+    CommandGamepad controller;
     
-      public DriveCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotationSupplier, Drive swerve, Gamepad controller) {
+      public DriveCommand(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotationSupplier, Drive swerve, CommandGamepad controller) {
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.swerve = swerve;
@@ -48,7 +49,7 @@ public class DriveCommand extends Command {
         omega = Math.copySign(omega * omega, omega);
         boolean isFlipped =
             MatchState.getAlliance().isPresent()
-            && MatchState.getAlliance().get() == Alliance.RED;
+            && MatchState.getAlliance().get() == Alliance.BLUE;
 
         ChassisVelocities speeds = new ChassisVelocities(
          linearVelocity.getX() * swerve.getMaxLinearVelocityPerSecond(),

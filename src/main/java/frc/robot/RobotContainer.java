@@ -19,6 +19,7 @@ import org.wpilib.driverstation.Alliance;
 
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
+import org.wpilib.command2.button.CommandGamepad;
 import org.wpilib.command2.button.GamepadButton;
 import frc.robot.drive.*;
 import frc.robot.Constants.ArmConstants;
@@ -37,7 +38,7 @@ public class RobotContainer {
   TrapezoidalTrajGenerator trajGenerator = new TrapezoidalTrajGenerator();
   ArmSubsystem arm = new ArmSubsystem(new ArmSim());
 
-  Gamepad controller = new Gamepad(0);
+  CommandGamepad controller = new CommandGamepad(0);
 
   public RobotContainer() {
     if (Robot.isReal()) {
@@ -72,7 +73,7 @@ public class RobotContainer {
         controller
       )); 
 
-      controller.x().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller.getHID()));
+      controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller.getHID()));
       controller.button(8).onTrue(
         Commands.runOnce(() -> drive.setPose(
           new Pose2d(

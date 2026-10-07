@@ -8,13 +8,14 @@ import org.wpilib.driverstation.XboxController;
 import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
+import org.wpilib.command2.button.CommandGamepad;
 
 public class FeedforwardCharacterization  {
     
     private static final double FF_START_DELAY = 2;
     private static final double FF_RAMP_RATE = 0.1;
     
-        public static Command feedforwardCommand(Drive drive, Gamepad controller) { 
+        public static Command feedforwardCommand(Drive drive, CommandGamepad controller) { 
             List<Double> velocitySamples = new LinkedList<>();
             List<Double> voltageSamples = new LinkedList<>();
             Timer timer = new Timer();
@@ -43,7 +44,7 @@ public class FeedforwardCharacterization  {
                     () -> {
                       double voltage = timer.get() * FF_RAMP_RATE;
                   drive.runCharacterization(voltage);
-                  if (controller.getXButton()) {
+                  if (controller.faceLeft().getAsBoolean()) {
                   velocitySamples.add(drive.getFFCharacterizationVelocity());
                   voltageSamples.add(voltage);
                   }

@@ -16,6 +16,7 @@ import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.command2.Command;
+import org.wpilib.command2.button.CommandGamepad;
 import org.wpilib.command2.button.GamepadButton;
 
 /*The plan:
@@ -34,7 +35,7 @@ public class AutoAlignHubCommand extends Command {
     private DoubleSupplier ySupplier;
     boolean isAllianceRed;
     private boolean isHubLocationKnown = false;
-    Gamepad controller;
+    CommandGamepad controller;
     Translation2d robotLocation;
     Translation2d Hublocation;
     private double rotationKP = 8;
@@ -42,7 +43,7 @@ public class AutoAlignHubCommand extends Command {
 
     
      
-    public AutoAlignHubCommand(Drive swerve, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotationSupplier, Gamepad controller) {
+    public AutoAlignHubCommand(Drive swerve, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotationSupplier, CommandGamepad controller) {
         this.swerve = swerve;
         this.rotationSupplier = rotationSupplier;
         this.controller = controller;
@@ -123,10 +124,10 @@ public class AutoAlignHubCommand extends Command {
     }
     public Translation2d getHubLocation(boolean isAllianceRed){ 
         if(isAllianceRed){
-            return new Translation2d(11.813388,4.034);
+            return new Translation2d( -3.6445, 0.0);
         } 
         else {
-            return new Translation2d(4.626, 4.034);
+            return new Translation2d( 3.6445, 0.0);
         }
     }
 
