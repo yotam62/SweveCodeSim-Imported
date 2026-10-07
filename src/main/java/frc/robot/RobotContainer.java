@@ -73,7 +73,7 @@ public class RobotContainer {
         controller
       )); 
 
-      controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller.getHID()));
+      controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller));
       controller.button(8).onTrue(
         Commands.runOnce(() -> drive.setPose(
           new Pose2d(
@@ -82,7 +82,7 @@ public class RobotContainer {
             drive)); 
 
 
-            controller.a().onTrue(
+            controller.faceUp().onTrue(
     Commands.defer(
         () -> new TrajectoryFollower(
             trajGenerator.createTraj(arm.getcurrentState(), arm.createRandomArmPointTraj(), List.of()),
@@ -93,7 +93,7 @@ public class RobotContainer {
         arm.setDefaultCommand(new StayCommand(arm));
 
 
-    controller.b().onTrue(
+    controller.faceRight().onTrue(
     Commands.defer(
         () -> new TrajectoryFollower(
             trajGenerator.createTraj(arm.getcurrentState(), arm.createRandomArmPointTraj(), List.of()),

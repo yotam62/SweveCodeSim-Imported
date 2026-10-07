@@ -19,7 +19,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import org.wpilib.math.filter.Debouncer;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.util.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularAcceleration;
@@ -308,7 +308,7 @@ public double getPositionRadians() {
     }
 
     /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
-  public void runSetpoint(SwerveModuleState state) {
+  public void runSetpoint(SwerveModuleVelocity state) {
     // Optimize velocity setpoint
     state.optimize(getAngle()); //makes sure we don't go the long way
     //state.cosineScale(inputs.turnPosition);
@@ -334,8 +334,8 @@ public double getPositionRadians() {
   }
 
     /** Returns the module state (turn angle and drive velocity). */
-  public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+  public SwerveModuleVelocity getVelocity() {
+    return new SwerveModuleVelocity(getVelocityMetersPerSec(), getAngle());
   }
 
     /** Returns the module positions received this cycle. */

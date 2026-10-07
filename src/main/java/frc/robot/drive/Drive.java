@@ -9,7 +9,7 @@ import org.wpilib.math.geometry.Twist2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.math.util.Units;
 import org.wpilib.command2.SubsystemBase;
@@ -22,7 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.wpilib.system.Timer;
 import org.wpilib.smartdashboard.Field2d;
-import org.wpilib.smartdashboard.SmartDashboard;
 import frc.robot.drive.VisionSubsystem.VisionMeasurement;
 
 public class Drive extends SubsystemBase{
@@ -44,11 +43,11 @@ public class Drive extends SubsystemBase{
 
     
 
-    SwerveModuleState[] mods = new SwerveModuleState[] {
-    new SwerveModuleState(),
-    new SwerveModuleState(),
-    new SwerveModuleState(),
-    new SwerveModuleState()};
+    SwerveModuleVelocity[] mods = new SwerveModuleVelocity[] {
+    new SwerveModuleVelocity(),
+    new SwerveModuleVelocity(),
+    new SwerveModuleVelocity(),
+    new SwerveModuleVelocity()};
 
     public SwerveModulePosition[] lastModulePositions = // For delta tracking
     new SwerveModulePosition[] {
@@ -92,9 +91,9 @@ public class Drive extends SubsystemBase{
 
     public void runVelocity(ChassisVelocities speeds) {
 
-    ChassisVelocities discreteSpeeds = ChassisVelocities.discretize(speeds, 0.02); // making sure the robot will move correctly with the spin and speed we give it. ALWAYS use it.
-    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds); //turning the robot spin and speed into the spin and speed of each swerve module.
-    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, getMaxLinearSpeedMetersPerSec()); // making sure each sweerve module doesn't  go over the speed limit, could slow down the robot.
+    ChassisVelocities discreteSpeeds = speeds.discretize( 0.02); // making sure the robot will move correctly with the spin and speed we give it. ALWAYS use it.
+    SwerveModuleVelocity[] setpointStates = kinematics.toSwerveModuleVelocities(discreteSpeeds); //turning the robot spin and speed into the spin and speed of each swerve module.
+    SwerveDriveKinematics.desaturateWheelVelocities(setpointStates, getMaxLinearSpeedMetersPerSec()); // making sure each sweerve module doesn't  go over the speed limit, could slow down the robot.
     for (int i = 0; i < 4; i++) {
         modules[i].runSetpoint(setpointStates[i]);
     }
@@ -130,8 +129,8 @@ public class Drive extends SubsystemBase{
     modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];//make an array
     moduleDeltas[moduleIndex] =
     new SwerveModulePosition(
-    modulePositions[moduleIndex].distanceMeters
-    - lastModulePositions[moduleIndex].distanceMeters,
+    modulePositions[moduleIndex].distance
+    - lastModulePositions[moduleIndex].distance,
     modulePositions[moduleIndex].angle);
     lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
     }
@@ -198,12 +197,12 @@ public class Drive extends SubsystemBase{
     }
 
 
-    private SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
+    private SwerveModuleVelocity[] getModuleStates() {
+        SwerveModuleVelocity[] states = new SwerveModuleVelocity[4];
 
         double totalSpeed = 0;
         for (int i = 0; i < 4; i++) {
-        states[i] = modules[i].getState();
+        states[i] = modules[i].getVelocity();
         totalSpeed += states[i].velocity;
         }
         

@@ -56,12 +56,10 @@ public class DriveCommand extends Command {
          linearVelocity.getY() * swerve.getMaxLinearVelocityPerSecond(),
          omega* swerve.getMaxAngularSpeedRadPerSecond());
 
-        swerve.runVelocity(
-        ChassisVelocities.fromFieldRelativeSpeeds(
-        speeds,
-        isFlipped
+        Rotation2d rootangle = isFlipped
             ? swerve.getRotation().plus(new Rotation2d(Math.PI))
-            : swerve.getRotation()));
+            : swerve.getRotation();
+        swerve.runVelocity(speeds.toRobotRelative(rootangle));
 
     } 
     //}

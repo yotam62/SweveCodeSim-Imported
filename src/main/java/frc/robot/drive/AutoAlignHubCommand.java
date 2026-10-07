@@ -100,15 +100,16 @@ public class AutoAlignHubCommand extends Command {
         linearVelocity.getY() * swerve.getMaxLinearVelocityPerSecond(),
         omega);
 
-        swerve.runVelocity(
-        ChassisVelocities.fromFieldRelativeSpeeds(
-            speeds,
-            isFlipped
-                ? swerve.getRotation().plus(new Rotation2d(Math.PI))
-                : swerve.getRotation()));
 
+
+                    Rotation2d rootangle = isFlipped
+            ? swerve.getRotation().plus(new Rotation2d(Math.PI))
+            : swerve.getRotation();
+
+                swerve.runVelocity(speeds.toRobotRelative(rootangle));
 
     }
+
 
     private static Translation2d getLinearVelocityFromJoysticks(double x, double y) { 
         double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), 0.1);

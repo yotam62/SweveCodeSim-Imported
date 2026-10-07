@@ -4,9 +4,9 @@ import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.system.DCMotor;
-import org.wpilib.math.system.LinearSystemId;
+
 import org.wpilib.math.util.Units;
 import org.wpilib.system.Timer;
 import org.wpilib.simulation.DCMotorSim;
@@ -90,7 +90,7 @@ public class ModuleSim  implements Module {
 
     }
 
-    public void runSetpoint(SwerveModuleState state) {
+    public void runSetpoint(SwerveModuleVelocity state) {
         // Optimize velocity setpoint
         state.optimize(getAngle());
 
@@ -148,8 +148,8 @@ public SwerveModulePosition getPosition() {
 
 
 
-public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+public SwerveModuleVelocity getVelocity() {
+    return new SwerveModuleVelocity(getVelocityMetersPerSec(), getAngle());
 }
 
 

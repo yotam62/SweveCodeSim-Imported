@@ -4,6 +4,9 @@ import org.wpilib.epilogue.Logged;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.kinematics.SwerveDriveKinematics;
 import org.wpilib.math.system.DCMotor;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+
 import frc.robot.util.LoggedTunableNumber;
 
 public final class Constants {
