@@ -132,16 +132,15 @@ public class AutoAlignHubCommand extends Command {
         }
     }
 
-        public double calculateOmegaToHub(Translation2d robotLocation, Drive swerve){
-        robotLocation = swerve.SwervePoseEstimator.getEstimatedPosition().getTranslation();
-        Translation2d rotationVector = Hublocation.minus(robotLocation);
-        Rotation2d allignDirection = rotationVector.getAngle();
-        double error = allignDirection.minus(swerve.SwervePoseEstimator.getEstimatedPosition().getRotation()).getRadians();
-        double radianDistance = MathUtil.angleModulus(error);
-        double omega = radianDistance * rotationKP; 
-        return omega;
+    public double calculateOmegaToHub(Translation2d robotLocation, Drive swerve) {
+        Pose2d pose = swerve.SwervePoseEstimator.getEstimatedPosition();
+        Translation2d toHub = Hublocation.minus(pose.getTranslation());
+        
+        Rotation2d alignDirection = toHub.getAngle().orElse(pose.getRotation());
 
-        }
+        double error = alignDirection.minus(pose.getRotation()).getRadians();
+        return MathUtil.angleModulus(error) * rotationKP;
+    }
 
 
     

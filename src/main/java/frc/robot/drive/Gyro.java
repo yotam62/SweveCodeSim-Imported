@@ -1,9 +1,12 @@
 package frc.robot.drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
+
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
 import org.wpilib.telemetry.Telemetry;
@@ -13,8 +16,10 @@ import java.util.Queue;
 
 public class Gyro {
 
+    private static final CANBus CAN_BUS = new CANBus(CANPort.CAN_D0);
+
        private final Pigeon2 pigeon =
-      new Pigeon2(13, "Drivetrain");
+      new Pigeon2(13, CAN_BUS);
 
   //private final AHRS navx = new AHRS(NavXComType.kMXP_SPI, 200);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();

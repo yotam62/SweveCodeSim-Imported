@@ -6,6 +6,7 @@ import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.system.DCMotor;
+import org.wpilib.math.system.Models;
 
 import org.wpilib.math.util.Units;
 import org.wpilib.system.Timer;
@@ -35,9 +36,9 @@ public class ModuleSim  implements Module {
         public double driveAccelerationRadPerSec = 0.0;
 
           private final DCMotorSim driveSim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(driveMotorModel, 0.025, SwerveConstants.driveReduction),
-          driveMotorModel);
+    new DCMotorSim(
+        Models.singleJointedArmFromPhysicalConstants(driveMotorModel, 0.025, SwerveConstants.driveReduction),
+        driveMotorModel);
           private final DCMotorSim turnSim;
 
 
@@ -49,7 +50,7 @@ public class ModuleSim  implements Module {
     // Set up turn sim (depends on index for correct reduction)
     turnSim =
         new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
+            Models.singleJointedArmFromPhysicalConstants(
                 turnMotorModel,
                 0.004,
                 18.75),
@@ -59,7 +60,7 @@ public class ModuleSim  implements Module {
     public void updateInputs() {
     // Run closed-loop control
    
-      driveAppliedVolts = driveFFVolts + driveController.calculate(driveSim.getAngularVelocityRadPerSec());
+      driveAppliedVolts = driveFFVolts + driveController.calculate(driveSim.getAngularVelocity());
    
       turnAppliedVolts = turnController.calculate(turnPosition.getRadians());
   
@@ -69,11 +70,11 @@ public class ModuleSim  implements Module {
     driveSim.update(0.02);
     turnSim.update(0.02);
 
-    drivePositionRad = driveSim.getAngularPositionRad();
-    driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+    drivePositionRad = driveSim.getAngularPosition();
+    driveVelocityRadPerSec = driveSim.getAngularVelocity();
 
 
-    turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
+    turnPosition = new Rotation2d(turnSim.getAngularPosition());
     turnAbsolutePosition = new Rotation2d(turnSim.getAngularPosition());
    // inputs.turnSupplyCurrentAmps = Math.abs(turnSim.getCurrentDrawAmps());
   }

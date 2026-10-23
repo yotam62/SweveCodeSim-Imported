@@ -49,6 +49,9 @@ deploy {
 
 def deployArtifact = deploy.targets.systemcore.artifacts.wpilibJava
 
+   def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
+   annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
+
 // Set to true to use debug for simulation including JNI
 wpi.java.runSimWithDebugJni = false
 

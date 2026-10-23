@@ -3,6 +3,7 @@ package frc.robot.drive;
 import java.util.Queue;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -16,6 +17,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import org.wpilib.hardware.bus.CANPort;
 import org.wpilib.math.filter.Debouncer;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
@@ -82,10 +85,12 @@ public class ModuleReal implements Module {
         this.constants = constants;
         this.index = index;
 
+        CANBus moduleBus = new CANBus(CANPort.CAN_D1);
 
-        driveTalon = new TalonFX(constants.driveMotorID(), "rio");
-        turnTalon = new TalonFX(constants.angleMotorID(), "rio");
-        cancoder = new CANcoder(constants.canCoderID(), "rio");
+
+        driveTalon = new TalonFX(constants.driveMotorID(), moduleBus);
+        turnTalon = new TalonFX(constants.angleMotorID(), moduleBus);
+        cancoder = new CANcoder(constants.canCoderID(), moduleBus);
 
         driveConfig = new TalonFXConfiguration();
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
