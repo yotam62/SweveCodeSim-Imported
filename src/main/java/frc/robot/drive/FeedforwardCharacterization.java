@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.wpilib.system.Timer;
 import org.wpilib.telemetry.Telemetry;
-import org.wpilib.driverstation.Gamepad;
-import org.wpilib.driverstation.XboxController;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.CommandGamepad;

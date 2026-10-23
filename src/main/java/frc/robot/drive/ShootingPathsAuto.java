@@ -10,7 +10,6 @@ import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.Alliance;
 import org.wpilib.system.Timer;
 
 public class ShootingPathsAuto extends Command{
@@ -52,9 +51,9 @@ public class ShootingPathsAuto extends Command{
         && MatchState.getAlliance().get() == Alliance.RED;
         Translation2d robotLocation = swerve.SwervePoseEstimator.getEstimatedPosition().getTranslation();
         Translation2d rotationVector = getHubLocation(isAllianceRed).minus(robotLocation);
-        Rotation2d allignDirection = rotationVector.getAngle(); //all that shit just for allign direction
+        Rotation2d currentAngle = swerve.SwervePoseEstimator.getEstimatedPosition().getRotation();
+        Rotation2d allignDirection = rotationVector.getAngle().orElse(currentAngle); //all that shit just for allign direction
 
-        Rotation2d currentAngle = swerve.SwervePoseEstimator.getEstimatedPosition().getRotation(); //just getting the omega (rotation)
         Rotation2d wantedAngle = allignDirection;    
         Rotation2d currentToWanted = wantedAngle.minus(currentAngle);
         double RadianDistance = currentToWanted.getRadians();
@@ -69,10 +68,7 @@ public class ShootingPathsAuto extends Command{
         boolean isFlipped =
         MatchState.getAlliance().isPresent() && MatchState.getAlliance().get() == Alliance.RED;
 
-        swerve.runVelocity(
-                  ChassisVelocities.fromFieldRelativeSpeeds(
-                      speeds,
-                      swerve.getRotation()));
+        swerve.runVelocity(speeds.toRobotRelative(swerve.getRotation()));
 
 
     }
