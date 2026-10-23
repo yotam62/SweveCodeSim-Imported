@@ -11,6 +11,7 @@ import org.wpilib.networktables.StructPublisher;
 import org.wpilib.networktables.TimestampedDoubleArray;
 
 
+
 public class Vision {
 
     Pose2d oldposeLL4 = new Pose2d();
@@ -49,17 +50,38 @@ public class Vision {
     //private Field2d field = new Field2d();
 
 
-    DoubleArraySubscriber Limelight_4 = NetworkTableInstance.getDefault().getTable("limelight-four").getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleArraySubscriber ll4_rotation = NetworkTableInstance.getDefault().getTable("limelight-four").getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleSubscriber connected4 = NetworkTableInstance.getDefault().getTable("limelight-four").getDoubleTopic("tv").subscribe(-1, PubSubOption.keepDuplicates(true));
+    // ---- Limelight 4 ----
+    DoubleArraySubscriber Limelight_4 = NetworkTableInstance.getDefault().getTable("limelight-four")
+        .getDoubleArrayTopic("botpose_orb_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleArraySubscriber ll4_rotation = NetworkTableInstance.getDefault().getTable("limelight-four")
+        .getDoubleArrayTopic("botpose_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleSubscriber connected4 = NetworkTableInstance.getDefault().getTable("limelight-four")
+        .getDoubleTopic("tv")
+        .subscribe(-1, PubSubOption.KEEP_DUPLICATES);
 
-    DoubleArraySubscriber Limelight_3GS = NetworkTableInstance.getDefault().getTable("limelight-threegs").getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleArraySubscriber ll3gs_rotation = NetworkTableInstance.getDefault().getTable("limelight-threegs").getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleSubscriber connected3gs = NetworkTableInstance.getDefault().getTable("limelight-threegs").getDoubleTopic("tv").subscribe(-1, PubSubOption.keepDuplicates(true));
+    // ---- Limelight 3GS ----
+    DoubleArraySubscriber Limelight_3GS = NetworkTableInstance.getDefault().getTable("limelight-threegs")
+        .getDoubleArrayTopic("botpose_orb_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleArraySubscriber ll3gs_rotation = NetworkTableInstance.getDefault().getTable("limelight-threegs")
+        .getDoubleArrayTopic("botpose_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleSubscriber connected3gs = NetworkTableInstance.getDefault().getTable("limelight-threegs")
+        .getDoubleTopic("tv")
+        .subscribe(-1, PubSubOption.KEEP_DUPLICATES);
 
-    DoubleArraySubscriber Limelight_3GF = NetworkTableInstance.getDefault().getTable("limelight-threegf").getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleArraySubscriber ll3gf_rotation = NetworkTableInstance.getDefault().getTable("limelight-threegf").getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[11], PubSubOption.keepDuplicates(true));
-    DoubleSubscriber connected3gf = NetworkTableInstance.getDefault().getTable("limelight-threegf").getDoubleTopic("tv").subscribe(-1, PubSubOption.keepDuplicates(true));
+    // ---- Limelight 3GF ----
+    DoubleArraySubscriber Limelight_3GF = NetworkTableInstance.getDefault().getTable("limelight-threegf")
+        .getDoubleArrayTopic("botpose_orb_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleArraySubscriber ll3gf_rotation = NetworkTableInstance.getDefault().getTable("limelight-threegf")
+        .getDoubleArrayTopic("botpose_wpiblue")
+        .subscribe(new double[11], PubSubOption.KEEP_DUPLICATES);
+    DoubleSubscriber connected3gf = NetworkTableInstance.getDefault().getTable("limelight-threegf")
+        .getDoubleTopic("tv")
+        .subscribe(-1, PubSubOption.KEEP_DUPLICATES);
 
     public void periodic() {
    

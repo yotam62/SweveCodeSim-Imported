@@ -3,9 +3,9 @@ package frc.robot.drive;
 import java.util.LinkedList;
 import java.util.List;
 import org.wpilib.system.Timer;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.XboxController;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.CommandGamepad;
@@ -69,8 +69,8 @@ public class FeedforwardCharacterization  {
                   double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 
                   
-                  SmartDashboard.putNumber("kS:", kS);
-                  SmartDashboard.putNumber("kV:", kV);
+                  Telemetry.log("kS:", kS);
+                  Telemetry.log("kV:", kV);
                   
 
     }));

@@ -1,6 +1,6 @@
 package frc.robot;
 
-import frc.robot.lib.BLine.*;
+//import frc.robot.lib.BLine.*;
 
 import java.util.List;
 import java.util.Random;
@@ -33,7 +33,7 @@ import frc.robot.TwoJointArm.ArmCommands.TrajectoryFollower;
 
 public class RobotContainer {
   public final Drive drive;
-  private FollowPath.Builder pathBuilder; //  not final, initialized in constructor
+  //private FollowPath.Builder pathBuilder; //  not final, initialized in constructor
   Random random = new Random();
   TrapezoidalTrajGenerator trajGenerator = new TrapezoidalTrajGenerator();
   ArmSubsystem arm = new ArmSubsystem(new ArmSim());

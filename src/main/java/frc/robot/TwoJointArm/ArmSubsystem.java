@@ -8,7 +8,7 @@ import frc.robot.TwoJointArm.KinematicsDynamics.jointXZ;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
 import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.util.Color;
 import org.wpilib.util.Color8Bit;
 
@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmSubsystem(ArmIO io) {
         this.io = io;
 
-        SmartDashboard.putData("ArmMechanism", armMechanism);
+        //SmartDashboard.putData("ArmMechanism", armMechanism);
          desiredState = new ArmPointTraj(ArmConstants.shoulderStartingAngle, ArmConstants.elbowStartingAngle, 0, 0, 0, 0);
 
 
@@ -60,12 +60,12 @@ public class ArmSubsystem extends SubsystemBase {
         Logger.recordOutput("elbowAppliedVoltage", inputs.elbowAppliedVoltage);
 
 
-        SmartDashboard.putNumber("elbowangle", inputs.elbowAngle);
+        Telemetry.log("elbowangle", inputs.elbowAngle);
 
-        SmartDashboard.putNumber("DesiredshoulderVelocity", desiredState.shoulderAngularVelocity());
-        SmartDashboard.putNumber("DesiredelbowVelocity", desiredState.elbowAngularVelocity());
-        SmartDashboard.putNumber("DesiredshoulderAngle", desiredState.shoulderAngle());
-        SmartDashboard.putNumber("DesiredelbowAngle", desiredState.elbowAngle());
+        Telemetry.log("DesiredshoulderVelocity", desiredState.shoulderAngularVelocity());
+        Telemetry.log("DesiredelbowVelocity", desiredState.elbowAngularVelocity());
+        Telemetry.log("DesiredshoulderAngle", desiredState.shoulderAngle());
+        Telemetry.log("DesiredelbowAngle", desiredState.elbowAngle());
 
 
         shoulderLigament.setAngle(Units.radiansToDegrees(inputs.shoulderAngle));

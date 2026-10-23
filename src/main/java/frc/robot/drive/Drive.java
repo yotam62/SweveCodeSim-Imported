@@ -21,6 +21,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.wpilib.system.Timer;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.smartdashboard.Field2d;
 import frc.robot.drive.VisionSubsystem.VisionMeasurement;
 
@@ -67,7 +68,7 @@ public class Drive extends SubsystemBase{
         modules[2] = brModule;
         modules[3] = frModule;
 
-        SmartDashboard.putData("field",m_field);
+        Telemetry.log("field",m_field);
         gyroResetTimer.start();
     }
     public double getMaxLinearVelocityPerSecond() {
@@ -216,7 +217,7 @@ public class Drive extends SubsystemBase{
   and the last number is the standard deviation of the rotation. The lower the error, the more we trast vison, and vice versa */
 
  //visionLock.lock();
-    SmartDashboard.putBoolean("angle conditions", Math.abs(Gyro.rollDegrees) < 1 || Math.abs(Gyro.pitchDegrees) < 1);
+    Telemetry.log("angle conditions", Math.abs(Gyro.rollDegrees) < 1 || Math.abs(Gyro.pitchDegrees) < 1);
  if (Math.abs(Gyro.rollDegrees) < 5 && Math.abs(Gyro.pitchDegrees) < 5 && getGyroSpeed() < 180 && getTranslationalSpeed() < 5) {
 
  SwervePoseEstimator.addVisionMeasurement(new Pose2d(measurement.pose().getTranslation(), getRotation()), measurement.timestamp(), stds);

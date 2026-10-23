@@ -2,12 +2,12 @@ package frc.robot.drive;
 
 import java.util.ArrayList;
 import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.SubsystemBase;
 import frc.robot.Robot;
 
@@ -91,9 +91,9 @@ public class VisionSubsystem extends SubsystemBase {
 
 
         if (vision.isNew_LL4 && vision.isConnected_LL4 && vision.tagCount_LL4 > 0 && Robot.useLimelightFour) { 
-            SmartDashboard.putBoolean("sensor receiving data", true);
+            Telemetry.log("sensor receiving data", true);
             double std_LL4 = (vision.avgDistance_LL4 * 0.02 ) / vision.tagCount_LL4;
-            SmartDashboard.putNumber("std_LL4", std_LL4);
+            Telemetry.log("std_LL4", std_LL4);
             double[] stds_LL4 = {std_LL4, std_LL4};
             if (std_LL4 < 0.1) {
                visionMeasurements.add(new VisionMeasurement(vision.MT2pose_LL4, vision.rotation_LL4, vision.time_LL4, stds_LL4, vision.tagCount_LL4, vision.avgDistance_LL4));

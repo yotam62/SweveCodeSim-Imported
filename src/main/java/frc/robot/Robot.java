@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import org.wpilib.framework.TimedRobot;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
 
@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
             fullList_disconnections += motorName + ", " + "\n";
         }
         
-        SmartDashboard.putString("Disconnected Motors", fullList_disconnections);
+        Telemetry.log("Disconnected Motors", fullList_disconnections);
   }
 
   @Override

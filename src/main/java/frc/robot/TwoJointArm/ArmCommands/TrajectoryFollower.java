@@ -1,7 +1,6 @@
 package frc.robot.TwoJointArm.ArmCommands;
 
 import org.wpilib.system.Timer;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.TwoJointArm.ArmPointTraj;

@@ -6,9 +6,9 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.util.Units;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.smartdashboard.SmartDashboard;
 import java.util.Queue;
 
 public class Gyro {
@@ -50,7 +50,7 @@ public class Gyro {
 
 
   public void periodic() {
-    SmartDashboard.putNumber("RAW", pigeon.getYaw().getValueAsDouble()); //puts the raw gyro value on smartdashboars
+    Telemetry.log("RAW", pigeon.getYaw().getValueAsDouble()); //puts the raw gyro value on smartdashboars
     connected = BaseStatusSignal.refreshAll(yaw, yawVelocity, roll, pitch).equals(StatusCode.OK); //checks if connected
     yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble()); //gets the yaw (actually important part) as a double
     yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble()); // gets the yaw velocity in rad/s
