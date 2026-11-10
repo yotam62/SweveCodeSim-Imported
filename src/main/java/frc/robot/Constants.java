@@ -22,7 +22,7 @@ public final class Constants {
   public static class SwerveConstants {
 
     public static final double driveReduction = 8.14; 
-    public static final double steerReduction = 150/7;
+    public static final double steerReduction = 21.4285714286;
 
     public static final double angleKP = 50;
     public static final double angleKI = 0;

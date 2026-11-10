@@ -315,12 +315,12 @@ public double getPositionRadians() {
     /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
   public void runSetpoint(SwerveModuleVelocity state) {
     // Optimize velocity setpoint
-    state.optimize(getAngle()); //makes sure we don't go the long way
+    SwerveModuleVelocity optimize = state.optimize(getAngle()); //makes sure we don't go the long way
     //state.cosineScale(inputs.turnPosition);
 
     // Apply setpoints
-    setDriveVelocity(state.velocity /SwerveConstants.WheelRadius);
-    setTurnPosition(state.angle);
+    setDriveVelocity(optimize.velocity /SwerveConstants.WheelRadius);
+    setTurnPosition(optimize.angle);
   }
 
   /** Returns the current drive position of the module in meters. */

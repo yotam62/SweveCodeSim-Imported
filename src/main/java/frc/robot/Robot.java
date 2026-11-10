@@ -12,8 +12,9 @@ import org.wpilib.framework.TimedRobot;
 import org.wpilib.telemetry.Telemetry;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
+import org.wpilib.driverstation.RobotState;
 
-public class Robot extends LoggedRobot {
+public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   public static ArrayList<String> DisconnectedMotorNames = new ArrayList<String>();
 
@@ -30,6 +31,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+
+    Telemetry.log("dbg/enabled", !RobotState.isDisabled());
+Telemetry.log("dbg/driveCmd",
+    m_robotContainer.drive.getCurrentCommand() != null
+        ? m_robotContainer.drive.getCurrentCommand().getName()
+        : "none");
     
     CommandScheduler.getInstance().run();
   }

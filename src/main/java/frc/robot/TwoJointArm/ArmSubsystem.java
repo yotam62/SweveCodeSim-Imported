@@ -2,8 +2,6 @@ package frc.robot.TwoJointArm;
 
 import org.wpilib.command2.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.TwoJointArm.ArmIO.ArmIOinputs;
-import frc.robot.TwoJointArm.ArmSim.SimState;
 import frc.robot.TwoJointArm.KinematicsDynamics.jointXZ;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
@@ -11,11 +9,7 @@ import org.wpilib.smartdashboard.MechanismRoot2d;
 import org.wpilib.telemetry.Telemetry;
 import org.wpilib.util.Color;
 import org.wpilib.util.Color8Bit;
-
-
 import org.littletonrobotics.junction.Logger;
-
-import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.util.Units;
 
 
@@ -39,16 +33,21 @@ public class ArmSubsystem extends SubsystemBase {
     public ArmSubsystem(ArmIO io) {
         this.io = io;
 
-        //SmartDashboard.putData("ArmMechanism", armMechanism);
+        Telemetry.log("ArmMechanism", armMechanism);
          desiredState = new ArmPointTraj(ArmConstants.shoulderStartingAngle, ArmConstants.elbowStartingAngle, 0, 0, 0, 0);
 
 
     }
 
+    
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("ArmInputs", inputs);
+                shoulderLigament.setAngle(Units.radiansToDegrees(inputs.shoulderAngle));
+        elbowLigament.setAngle(Units.radiansToDegrees(inputs.elbowAngle));
+        Telemetry.log("ArmMechanism", armMechanism);
 
 
 

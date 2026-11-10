@@ -94,7 +94,8 @@ public class Drive extends SubsystemBase{
 
     ChassisVelocities discreteSpeeds = speeds.discretize( 0.02); // making sure the robot will move correctly with the spin and speed we give it. ALWAYS use it.
     SwerveModuleVelocity[] setpointStates = kinematics.toSwerveModuleVelocities(discreteSpeeds); //turning the robot spin and speed into the spin and speed of each swerve module.
-    SwerveDriveKinematics.desaturateWheelVelocities(setpointStates, getMaxLinearSpeedMetersPerSec()); // making sure each sweerve module doesn't  go over the speed limit, could slow down the robot.
+    setpointStates = SwerveDriveKinematics.desaturateWheelVelocities(setpointStates, getMaxLinearSpeedMetersPerSec());// making sure each swerve module doesn't  go over the speed limit, could slow down the robot.
+        Telemetry.log("dbg/setpointFL", setpointStates[0].velocity);
     for (int i = 0; i < 4; i++) {
         modules[i].runSetpoint(setpointStates[i]);
     }
@@ -163,9 +164,12 @@ public class Drive extends SubsystemBase{
     
 
          m_field.setRobotPose(SwervePoseEstimator.getEstimatedPosition());
-        
-        
 
+        Telemetry.log("dbg/poseX", SwervePoseEstimator.getEstimatedPosition().getX());
+        Telemetry.log("dbg/modVelFL", modules[0].getVelocityMetersPerSec());
+        
+        
+    Telemetry.log("Drive/Pose", SwervePoseEstimator.getEstimatedPosition());
 
         }
  

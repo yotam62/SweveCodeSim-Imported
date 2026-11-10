@@ -3,6 +3,7 @@ package frc.robot.drive;
 import java.util.function.DoubleSupplier;
 
 import org.wpilib.math.util.MathUtil;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Transform2d;
@@ -38,6 +39,8 @@ public class DriveCommand extends Command {
     }
 
     public void execute() {
+
+        
         Translation2d linearVelocity;
        // if(controller.isConnected()){            
             linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
@@ -56,10 +59,15 @@ public class DriveCommand extends Command {
          linearVelocity.getY() * swerve.getMaxLinearVelocityPerSecond(),
          omega* swerve.getMaxAngularSpeedRadPerSecond());
 
+            Telemetry.log("dbg/cmdVx", speeds.vx);
+            Telemetry.log("dbg/cmdOmega", speeds.omega);
+
         Rotation2d rootangle = isFlipped
             ? swerve.getRotation().plus(new Rotation2d(Math.PI))
             : swerve.getRotation();
         swerve.runVelocity(speeds.toRobotRelative(rootangle));
+
+
 
     } 
     //}

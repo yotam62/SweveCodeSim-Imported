@@ -92,11 +92,11 @@ public class ModuleSim  implements Module {
 
     public void runSetpoint(SwerveModuleVelocity state) {
         // Optimize velocity setpoint
-        state.optimize(getAngle());
+        SwerveModuleVelocity optimize = state.optimize( getAngle());
 
         // Apply setpoints
-        setDriveVelocity(state.velocity /SwerveConstants.WheelRadius);
-        setTurnPosition(state.angle);
+        setDriveVelocity(optimize.velocity /SwerveConstants.WheelRadius);
+        setTurnPosition(optimize.angle);
   }
 
   public void setDriveVelocity(double output) {

@@ -43,12 +43,12 @@ public class AutoAlignHubCommand extends Command {
 
     
      
-    public AutoAlignHubCommand(Drive swerve, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rotationSupplier, CommandGamepad controller) {
+    public AutoAlignHubCommand(Drive swerve, double xSupplier, double ySupplier, double rotationSupplier, CommandGamepad controller) {
         this.swerve = swerve;
-        this.rotationSupplier = rotationSupplier;
+        this.rotationSupplier = () -> rotationSupplier;
         this.controller = controller;
-        this.xSupplier = xSupplier;
-        this.ySupplier = ySupplier;
+        this.xSupplier = () -> xSupplier;
+        this.ySupplier = () -> ySupplier;
             addRequirements(swerve);
     }
 

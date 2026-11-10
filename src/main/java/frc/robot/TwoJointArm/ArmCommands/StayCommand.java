@@ -3,7 +3,6 @@ package frc.robot.TwoJointArm.ArmCommands;
 import org.wpilib.command2.Command;
 import frc.robot.TwoJointArm.ArmPointTraj;
 import frc.robot.TwoJointArm.ArmSubsystem;
-import frc.robot.TwoJointArm.ArmTraj;
 import frc.robot.TwoJointArm.KinematicsDynamics;
 
 public class StayCommand extends Command {
@@ -15,7 +14,7 @@ public class StayCommand extends Command {
 
 
         public StayCommand(ArmSubsystem Arm) {
-        this.Arm = Arm;
+        this.Arm = Arm; 
 
         addRequirements(Arm);
     }

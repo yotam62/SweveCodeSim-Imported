@@ -8,23 +8,13 @@ import java.util.Set;
 
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.driverstation.MatchState;
-import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.MatchType;
-import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.Gamepad;
-import org.wpilib.driverstation.Alliance;
-
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.GamepadButton;
 import frc.robot.drive.*;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.TwoJointArm.ArmPointTraj;
 import frc.robot.TwoJointArm.ArmSim;
 import frc.robot.TwoJointArm.ArmSubsystem;
 import frc.robot.TwoJointArm.TrapezoidalTrajGenerator;
@@ -73,6 +63,7 @@ public class RobotContainer {
         controller
       )); 
 
+    
       controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller));
       controller.button(8).onTrue(
         Commands.runOnce(() -> drive.setPose(
@@ -100,6 +91,14 @@ public class RobotContainer {
             arm
         ),
         Set.of(arm)));
+
+        controller.faceDown().whileTrue(
+          new AutoAlignHubCommand(
+            drive, 
+            controller.getLeftX(), 
+            controller.getLeftY(), 
+            controller.getRightX(), 
+            controller));
 
 
  }
