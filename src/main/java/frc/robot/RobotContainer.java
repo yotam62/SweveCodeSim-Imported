@@ -64,13 +64,13 @@ public class RobotContainer {
       )); 
 
     
-      controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller));
-      controller.button(8).onTrue(
-        Commands.runOnce(() -> drive.setPose(
-          new Pose2d(
-            drive.SwervePoseEstimator.getEstimatedPosition().getTranslation(), 
-            MatchState.getAlliance().get().equals(Alliance.BLUE) ? Rotation2d.ZERO : Rotation2d.fromDegrees(180))), 
-            drive)); 
+      // controller.faceLeft().onTrue(FeedforwardCharacterization.feedforwardCommand(drive, controller));
+      // controller.button(8).onTrue(
+      //   Commands.runOnce(() -> drive.setPose(
+      //     new Pose2d(
+      //       drive.SwervePoseEstimator.getEstimatedPosition().getTranslation(), 
+      //       MatchState.getAlliance().get().equals(Alliance.BLUE) ? Rotation2d.ZERO : Rotation2d.fromDegrees(180))), 
+      //       drive)); 
 
 
             controller.faceUp().onTrue(
@@ -92,7 +92,7 @@ public class RobotContainer {
         ),
         Set.of(arm)));
 
-        controller.faceDown().whileTrue(
+        controller.faceDown().whileTrue( 
           new AutoAlignHubCommand(
             drive, 
             controller.getLeftX(), 
