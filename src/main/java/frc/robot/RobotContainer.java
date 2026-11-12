@@ -99,7 +99,7 @@ public class RobotContainer {
             controller.getLeftY(), 
             controller.getRightX(), 
             controller));
- //test 3
+
 
  }
 
@@ -118,25 +118,9 @@ public class RobotContainer {
   //   configureBindings();
   // }
 
-  // private void configureBindings() {
-  //   drive.setDefaultCommand(
-  //     new DriveCommand(
-  //       () -> -controller.getLeftX(),
-  //       () -> -controller.getLeftY(),
-  //       () -> -controller.getHID().getRawAxis(2),
-  //       drive,
-  //       controller
-  //     ));
 
-  //   controller.x().whileTrue(new AutoAlignHubCommand(drive, 
-  //       () -> -controller.getLeftX(), 
-  //       () -> -controller.getLeftY(), 
-  //       () -> -controller.getHID().getRawAxis(2), 
-  //       controller));
 
-  //   controller.x().whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("X pressed", true)))
-  //       .onFalse(new InstantCommand(() -> SmartDashboard.putBoolean("X pressed", false)));
-  // }
+
 
 
   // public Command getAutonomousCommand() {
